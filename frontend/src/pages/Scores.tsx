@@ -44,6 +44,7 @@ function Scores() {
 
     getData();
   }, []);
+
   return (
     <div>
       LeaderBoard

@@ -2,12 +2,14 @@ package ee.margus.card_game.service;
 
 import ee.margus.card_game.dto.StartGameDTO;
 import ee.margus.card_game.entity.Player;
+import ee.margus.card_game.model.Deck;
 import ee.margus.card_game.model.GameSession;
+import ee.margus.card_game.util.RandomGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.UUID;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -16,16 +18,18 @@ public class SessionService {
     @Autowired
     private PlayerService playerService;
 
+    @Autowired
+    private RandomGenerator randomGenerator;
+
     public StartGameDTO createSession(StartGameDTO request) {
-        String uuid = UUID.randomUUID().toString();
-        GameSession gameState = new GameSession();
+        GameSession gameState = new GameSession(randomGenerator.generate(), new Deck(new Random()));
+        String uuid = gameState.getSessionId();
         if (request.getPlayer().getId() == null) {
             Player createdPlayer = playerService.create(request.getPlayer().getName());
             gameState.setPlayer(createdPlayer);
         } else {
             gameState.setPlayer(request.getPlayer());
         }
-        gameState.setSessionId(uuid);
         games.put(uuid, gameState);
         return new StartGameDTO(uuid, gameState.getPlayer());
     }

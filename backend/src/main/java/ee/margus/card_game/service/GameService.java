@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GameService {
-
     @Autowired
     private ScoresService scoresService;
     @Autowired
@@ -18,12 +17,12 @@ public class GameService {
 
     public CardGameDTO start(GameSession session) {
         Card firstCard = session.getDeck().draw(session.getCurrentCard());
-        session.setStartTime();
+        //session.setStartTime();
         session.setCurrentCard(firstCard);
         session.resetGuessTime();
         return new CardGameDTO(session.getSessionId(),
                 firstCard,
-                new Card(),
+                null,
                 session.getLives(),
                 session.getScore(),
                 Status.ACTIVE

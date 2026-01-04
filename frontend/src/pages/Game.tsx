@@ -10,7 +10,7 @@ import { convertCard } from "../utils/CardConverter";
 const backendUrl = import.meta.env.VITE_API_HOST;
 
 function Game() {
-  const [sessionId, setSessionId] = useState<string>("");
+  const [sessionId, setSessionId] = useState("");
   const [card, setCard] = useState<CardGame>();
   const [player, setPlayer] = useState<Player>();
   const [playerNameEntered, setPlayerNameEntered] = useState(false);
@@ -19,7 +19,7 @@ function Game() {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [timer, setTimer] = useState(10);
-  const [buttonsVisible, setButtonsVisible] = useState(true);
+  const [gameOver, setGameOver] = useState("");
 
   async function createSession() {
     const payload = { player };
@@ -64,9 +64,12 @@ function Game() {
       setCard(data);
       setLives(data.lives);
       setScore(data.score);
-      if (data.status === "TIME_OUT") return;
+      if (data.status === "TIME_OUT") {
+        setGameOver("Game over. Time ran out.");
+        return;
+      }
       if (data.status === "LIVES_LOST") {
-        setButtonsVisible(false);
+        setGameOver("Game over. No more lives.");
         return;
       }
       setTimer(10);
@@ -91,9 +94,9 @@ function Game() {
   function handleNameChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
-    const name = e.target.value;
+    const name = e.target.value.trim();
     setPlayer((prev) => ({ ...prev, name }));
-    setPlayerNameEntered(name.trim().length > 0);
+    setPlayerNameEntered(name.length > 0);
   }
 
   function createUserAndSession() {
@@ -105,6 +108,7 @@ function Game() {
     createSession();
     setUserCreated(true);
     setGameStarted(false);
+    setGameOver("");
   }
 
   async function drawCard() {
@@ -112,12 +116,12 @@ function Game() {
     setScore(0);
     setLives(3);
     setTimer(10);
-    setButtonsVisible(true);
+    setGameOver("");
     await startGame();
   }
 
   useEffect(() => {
-    if (!userCreated || !buttonsVisible) return;
+    if (!userCreated || !gameStarted) return;
     const intervalId = setInterval(() => {
       setTimer((t) => {
         if (t <= 1) clearInterval(intervalId);
@@ -125,15 +129,13 @@ function Game() {
       });
     }, 1000);
     return () => clearInterval(intervalId);
-  }, [userCreated, buttonsVisible]);
+  }, [userCreated, gameStarted]);
 
   useEffect(() => {
-    if (!userCreated || !buttonsVisible) return;
+    if (!userCreated || !gameStarted) return;
     if (timer > 0) return;
     endGame();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setButtonsVisible(false);
-  }, [timer, userCreated, buttonsVisible]);
+  }, [timer, userCreated, gameStarted]);
 
   return (
     <Box
@@ -220,7 +222,7 @@ function Game() {
                   textAlign: "center",
                 }}
               >
-                {card?.previousCard.rank && (
+                {card?.previousCard?.rank && (
                   <>
                     <Typography variant="h6">
                       Previous Card: {card?.previousCard.rank}
@@ -234,7 +236,7 @@ function Game() {
                   Current Card: {card?.card.rank} of {card?.card.suit}
                 </Typography>
               </Box>
-              {buttonsVisible ? (
+              {!gameOver ? (
                 <Box
                   sx={{
                     display: "flex",
@@ -249,7 +251,7 @@ function Game() {
                 </Box>
               ) : (
                 <Box sx={{ textAlign: "center", mt: 2 }}>
-                  <Typography>Time's up or Game Over!</Typography>
+                  <Typography>{gameOver}</Typography>
                   <Button onClick={startNewGame} variant="contained">
                     Start New Game
                   </Button>

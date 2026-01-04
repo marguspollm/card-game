@@ -10,13 +10,32 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
 } from "@mui/material";
+import type { Order } from "../models/Order";
 
 const backendUrl = import.meta.env.VITE_API_HOST;
 
 function PlayerScores() {
   const { id } = useParams();
   const [scores, setScores] = useState<Score[]>([]);
+
+  const [order, setOrder] = useState<Order>("desc");
+  const [orderBy, setOrderBy] = useState<keyof Score>("score");
+
+  const handleRequestSort = (property: keyof Score) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const sortedScores = [...scores].sort((a, b) => {
+    const aValue = a[orderBy];
+    const bValue = b[orderBy];
+    if (aValue < bValue) return order === "asc" ? -1 : 1;
+    if (aValue > bValue) return order === "asc" ? 1 : -1;
+    return 0;
+  });
 
   useEffect(() => {
     fetch(`${backendUrl}/player/${id}/scores`)
@@ -25,27 +44,36 @@ function PlayerScores() {
   }, [id]);
 
   return (
-    <div>
+    <>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align="right">Score</TableCell>
-              <TableCell align="right">Time</TableCell>
+              <TableCell align="left">
+                <TableSortLabel
+                  active={orderBy === "score"}
+                  direction={orderBy === "score" ? order : "asc"}
+                  onClick={() => handleRequestSort("score")}
+                >
+                  Score
+                </TableSortLabel>
+              </TableCell>
+
+              <TableCell align="right">
+                <TableSortLabel
+                  active={orderBy === "duration"}
+                  direction={orderBy === "duration" ? order : "asc"}
+                  onClick={() => handleRequestSort("duration")}
+                >
+                  Duration
+                </TableSortLabel>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {scores?.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell
-                  component="th"
-                  scope="row"
-                  key={row.player.id}
-                ></TableCell>
-                <TableCell align="right">{row.score}</TableCell>
+            {sortedScores?.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell align="left">{row.score}</TableCell>
                 <TableCell align="right">
                   {formatDuration(row.duration)}
                 </TableCell>
@@ -54,22 +82,7 @@ function PlayerScores() {
           </TableBody>
         </Table>
       </TableContainer>
-
-      {
-        <div>
-          {scores.map((score, index) => {
-            return (
-              <div key={score.id}>
-                Game: #{index + 1}
-                <br />
-                Score: {score.score} - Duration:{" "}
-                {formatDuration(score.duration)}
-              </div>
-            );
-          })}
-        </div>
-      }
-    </div>
+    </>
   );
 }
 

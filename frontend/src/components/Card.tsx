@@ -1,8 +1,7 @@
-import { cardMap } from "../utils/CardConverter";
+import { memo } from "react";
 
-function Card({ code }: { code: string }) {
-  const CardSvg = cardMap[code];
-  return <CardSvg width={"100"} height={"140px"} />;
-}
+const Card = memo(function Card({ code }: { code: string }) {
+  return <img src={`/cards/${code}.svg`} alt={code} />;
+});
 
 export default Card;

@@ -6,24 +6,32 @@ import java.util.List;
 import java.util.Random;
 
 public class Deck {
-    private final List<Card> deck = new ArrayList<>();
+    private final List<Card> cards;
+    private final Random random;
 
-    public Deck() {
+    public Deck(Random random) {
+        this.random = random;
+        this.cards = new ArrayList<>();
+
         for (Suit suit : Suit.values()) {
             for (Rank rank : Rank.values()) {
-                deck.add(new Card(rank, suit));
+                cards.add(new Card(rank, suit));
             }
         }
-        Collections.shuffle(deck);
+        Collections.shuffle(cards);
     }
 
     public Card draw(Card previous) {
         Random random = new Random();
         if (previous == null) {
-            return deck.get(random.nextInt(deck.size()));
+            return cards.get(random.nextInt(cards.size()));
         }
-        List<Card> possibleNextCards = deck.stream().filter(card -> !card.equals(previous)).toList();
+        List<Card> possibleNextCards = cards.stream().filter(card -> !card.equals(previous)).toList();
 
         return possibleNextCards.get(random.nextInt(possibleNextCards.size()));
+    }
+
+    public List<Card> getCards() {
+        return cards;
     }
 }
