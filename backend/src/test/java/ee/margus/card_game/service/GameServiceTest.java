@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -117,7 +118,7 @@ class GameServiceTest {
         Deck deck = mock(Deck.class);
         GameSession gameSession = new GameSession(uuid, deck);
         gameSession.setCurrentCard(card);
-        gameSession.setGuessTime(System.currentTimeMillis()-20000);
+        gameSession.setGuessTime(Instant.now().minusMillis(20000));
 
         CardGameDTO response = new CardGameDTO();
         response.setSessionId(gameSession.getSessionId());

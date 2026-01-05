@@ -1,15 +1,12 @@
 package ee.margus.card_game.model;
 
 import ee.margus.card_game.entity.Player;
-import ee.margus.card_game.util.RandomGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Random;
 
 @Getter
 @Setter
@@ -22,7 +19,7 @@ public class GameSession {
     private Card previousCard;
     private int lives = 3;
     private int score = 0;
-    private long guessTime;
+    private Instant guessTime;
     private Instant startTime = Instant.now();
     private long duration;
     private Player player;
@@ -41,7 +38,7 @@ public class GameSession {
     }
 
     public void resetGuessTime() {
-        guessTime = System.currentTimeMillis();
+        guessTime = Instant.now();
     }
 
     public boolean isDead() {
@@ -49,10 +46,21 @@ public class GameSession {
     }
 
     public boolean isTimedOut() {
-        return System.currentTimeMillis() - guessTime > 10000;
+        return Duration.between(guessTime, Instant.now()).toMillis() > 10000;
     }
 
     public void calcDuration() {
         duration = Duration.between(startTime, Instant.now()).toMillis();
+    }
+
+    @Override
+    public String toString() {
+        boolean safeTimedOut;
+        try {
+            safeTimedOut = isTimedOut();
+        } catch (Exception e) {
+            safeTimedOut = false;
+        }
+        return "\n SessinId:" + sessionId + " - startTime:" + startTime + " - duration:" + duration + " - dead?:" + safeTimedOut + " - guessTime:" + guessTime;
     }
 }

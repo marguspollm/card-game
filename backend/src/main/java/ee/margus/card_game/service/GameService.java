@@ -17,7 +17,6 @@ public class GameService {
 
     public CardGameDTO start(GameSession session) {
         Card firstCard = session.getDeck().draw(session.getCurrentCard());
-        //session.setStartTime();
         session.setCurrentCard(firstCard);
         session.resetGuessTime();
         return new CardGameDTO(session.getSessionId(),
