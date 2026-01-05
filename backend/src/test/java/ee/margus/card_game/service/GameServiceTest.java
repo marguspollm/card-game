@@ -35,14 +35,14 @@ class GameServiceTest {
     @Test
     void start() {
         Deck deck = mock(Deck.class);
-        GameSession gameSession = new GameSession(uuid, deck);
+        GameState gameState = new GameState(uuid, deck);
         CardGameDTO response = new CardGameDTO();
         response.setSessionId(uuid);
         response.setScore(0);
         response.setLives(3);
         response.setStatus(Status.ACTIVE);
 
-        assertEquals(response, gameService.start(gameSession));
+        assertEquals(response, gameService.start(gameState));
     }
 
     @Test
@@ -50,12 +50,12 @@ class GameServiceTest {
         Card card = new Card(Rank.JACK, Suit.DIAMONDS);
         Card nextCard = new Card(Rank.ACE, Suit.SPADES);
         Deck deck = mock(Deck.class);
-        GameSession gameSession = new GameSession(uuid, deck);
-        gameSession.setCurrentCard(card);
-        gameSession.resetGuessTime();
+        GameState gameState = new GameState(uuid, deck);
+        gameState.setCurrentCard(card);
+        gameState.resetGuessTime();
 
         CardGameDTO response = new CardGameDTO();
-        response.setSessionId(gameSession.getSessionId());
+        response.setSessionId(gameState.getSessionId());
         response.setCard(nextCard);
         response.setPreviousCard(card);
         response.setLives(3);
@@ -64,7 +64,7 @@ class GameServiceTest {
 
         when(deck.draw(any(Card.class))).thenReturn(nextCard);
 
-        assertEquals(response, gameService.guess(gameSession, Guess.EQUAL));
+        assertEquals(response, gameService.guess(gameState, Guess.EQUAL));
     }
 
     @Test
@@ -72,12 +72,12 @@ class GameServiceTest {
         Card card = new Card(Rank.JACK, Suit.DIAMONDS);
         Card nextCard = new Card(Rank.ACE, Suit.SPADES);
         Deck deck = mock(Deck.class);
-        GameSession gameSession = new GameSession(uuid, deck);
-        gameSession.setCurrentCard(card);
-        gameSession.resetGuessTime();
+        GameState gameState = new GameState(uuid, deck);
+        gameState.setCurrentCard(card);
+        gameState.resetGuessTime();
 
         CardGameDTO response = new CardGameDTO();
-        response.setSessionId(gameSession.getSessionId());
+        response.setSessionId(gameState.getSessionId());
         response.setCard(nextCard);
         response.setPreviousCard(card);
         response.setLives(2);
@@ -86,7 +86,7 @@ class GameServiceTest {
 
         when(deck.draw(any(Card.class))).thenReturn(nextCard);
 
-        assertEquals(response, gameService.guess(gameSession, Guess.HIGHER));
+        assertEquals(response, gameService.guess(gameState, Guess.HIGHER));
     }
 
     @Test
@@ -94,13 +94,13 @@ class GameServiceTest {
         Card card = new Card(Rank.JACK, Suit.DIAMONDS);
         Card nextCard = new Card(Rank.ACE, Suit.SPADES);
         Deck deck = mock(Deck.class);
-        GameSession gameSession = new GameSession(uuid, deck);
-        gameSession.setCurrentCard(card);
-        gameSession.setLives(1);
-        gameSession.resetGuessTime();
+        GameState gameState = new GameState(uuid, deck);
+        gameState.setCurrentCard(card);
+        gameState.setLives(1);
+        gameState.resetGuessTime();
 
         CardGameDTO response = new CardGameDTO();
-        response.setSessionId(gameSession.getSessionId());
+        response.setSessionId(gameState.getSessionId());
         response.setCard(nextCard);
         response.setPreviousCard(card);
         response.setLives(0);
@@ -109,19 +109,19 @@ class GameServiceTest {
 
         when(deck.draw(any(Card.class))).thenReturn(nextCard);
 
-        assertEquals(response, gameService.guess(gameSession, Guess.LOWER));
+        assertEquals(response, gameService.guess(gameState, Guess.LOWER));
     }
 
     @Test
     void giveGuessTimerReachesZero_thenReturnTimedOut() {
         Card card = new Card(Rank.JACK, Suit.DIAMONDS);
         Deck deck = mock(Deck.class);
-        GameSession gameSession = new GameSession(uuid, deck);
-        gameSession.setCurrentCard(card);
-        gameSession.setGuessTime(Instant.now().minusMillis(20000));
+        GameState gameState = new GameState(uuid, deck);
+        gameState.setCurrentCard(card);
+        gameState.setGuessTime(Instant.now().minusMillis(20000));
 
         CardGameDTO response = new CardGameDTO();
-        response.setSessionId(gameSession.getSessionId());
+        response.setSessionId(gameState.getSessionId());
         response.setCard(card);
         response.setPreviousCard(null);
         response.setLives(3);
@@ -129,7 +129,7 @@ class GameServiceTest {
         response.setStatus(Status.TIME_OUT);
 
 
-        assertEquals(response, gameService.guess(gameSession, Guess.HIGHER));
+        assertEquals(response, gameService.guess(gameState, Guess.HIGHER));
     }
 
     @Test
@@ -137,12 +137,12 @@ class GameServiceTest {
         Player player = new Player();
         player.setId(1L);
         player.setName("Test");
-        GameSession gameSession = new GameSession(uuid, new Deck(new Random()));
-        gameSession.setScore(10);
-        gameSession.setPlayer(player);
+        GameState gameState = new GameState(uuid, new Deck(new Random()));
+        gameState.setScore(10);
+        gameState.setPlayer(player);
 
-        gameService.endGame(gameSession);
+        gameService.endGame(gameState);
 
-        verify(scoresService).saveResult(gameSession);
+        verify(scoresService).saveResult(gameState);
     }
 }

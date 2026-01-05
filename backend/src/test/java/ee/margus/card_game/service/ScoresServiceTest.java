@@ -3,7 +3,7 @@ package ee.margus.card_game.service;
 import ee.margus.card_game.entity.Player;
 import ee.margus.card_game.entity.Score;
 import ee.margus.card_game.model.Deck;
-import ee.margus.card_game.model.GameSession;
+import ee.margus.card_game.model.GameState;
 import ee.margus.card_game.repository.ScoreRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +36,7 @@ class ScoresServiceTest {
     @Test
     void saveResult() {
         Deck deck = mock(Deck.class);
-        GameSession session = new GameSession("test-uuid", deck);
+        GameState session = new GameState("test-uuid", deck);
         session.setScore(50);
         Player player = new Player();
         session.setPlayer(player);

@@ -3,7 +3,7 @@ package ee.margus.card_game.service;
 import ee.margus.card_game.dto.StartGameDTO;
 import ee.margus.card_game.entity.Player;
 import ee.margus.card_game.model.Deck;
-import ee.margus.card_game.model.GameSession;
+import ee.margus.card_game.model.GameState;
 import ee.margus.card_game.util.RandomGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class SessionService {
-    private final Map<String, GameSession> games = new ConcurrentHashMap<>();
+    private final Map<String, GameState> games = new ConcurrentHashMap<>();
     @Autowired
     private PlayerService playerService;
 
@@ -22,7 +22,7 @@ public class SessionService {
     private RandomGenerator randomGenerator;
 
     public StartGameDTO createSession(StartGameDTO request) {
-        GameSession gameState = new GameSession(randomGenerator.generate(), new Deck(new Random()));
+        GameState gameState = new GameState(randomGenerator.generate(), new Deck(new Random()));
         String uuid = gameState.getSessionId();
         if (request.getPlayer().getId() == null) {
             Player createdPlayer = playerService.create(request.getPlayer().getName());
@@ -34,8 +34,8 @@ public class SessionService {
         return new StartGameDTO(uuid, gameState.getPlayer());
     }
 
-    public GameSession getSession(String id) {
-        GameSession session = games.get(id);
+    public GameState getSession(String id) {
+        GameState session = games.get(id);
         if (session == null) {
             throw new RuntimeException("Session not found");
         }

@@ -2,7 +2,7 @@ package ee.margus.card_game.service;
 
 import ee.margus.card_game.dto.CardGameDTO;
 import ee.margus.card_game.model.Card;
-import ee.margus.card_game.model.GameSession;
+import ee.margus.card_game.model.GameState;
 import ee.margus.card_game.model.Guess;
 import ee.margus.card_game.model.Status;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ public class GameService {
     @Autowired
     private SessionService sessionService;
 
-    public CardGameDTO start(GameSession session) {
+    public CardGameDTO start(GameState session) {
         Card firstCard = session.getDeck().draw(session.getCurrentCard());
         session.setCurrentCard(firstCard);
         session.resetGuessTime();
@@ -28,7 +28,7 @@ public class GameService {
         );
     }
 
-    public CardGameDTO guess(GameSession session, Guess guess) {
+    public CardGameDTO guess(GameState session, Guess guess) {
         if (session.isTimedOut())
             return new CardGameDTO(session.getSessionId(),
                     session.getCurrentCard(), session.getPreviousCard(),
@@ -76,7 +76,7 @@ public class GameService {
         return Guess.EQUAL;
     }
 
-    public void endGame(GameSession session) {
+    public void endGame(GameState session) {
         session.calcDuration();
         scoresService.saveResult(session);
         sessionService.deleteSession(session.getSessionId());

@@ -1,7 +1,7 @@
 package ee.margus.card_game.service;
 
 import ee.margus.card_game.entity.Score;
-import ee.margus.card_game.model.GameSession;
+import ee.margus.card_game.model.GameState;
 import ee.margus.card_game.repository.ScoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +18,11 @@ public class ScoresService {
         return scoreRepository.findAll();
     }
 
-    public void saveResult(GameSession gameSession) {
+    public void saveResult(GameState gameState) {
         Score entry = new Score();
-        entry.setDuration(gameSession.getDuration());
-        entry.setScore(gameSession.getScore());
-        entry.setPlayer(gameSession.getPlayer());
+        entry.setDuration(gameState.getDuration());
+        entry.setScore(gameState.getScore());
+        entry.setPlayer(gameState.getPlayer());
         scoreRepository.save(entry);
     }
 

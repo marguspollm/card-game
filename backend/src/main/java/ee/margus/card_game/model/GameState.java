@@ -12,7 +12,7 @@ import java.time.Instant;
 @Setter
 @AllArgsConstructor
 //@NoArgsConstructor
-public class GameSession {
+public class GameState {
     private final String sessionId;
     private final Deck deck;
     private Card currentCard;
@@ -24,7 +24,7 @@ public class GameSession {
     private long duration;
     private Player player;
 
-    public GameSession(String sessionId, Deck deck) {
+    public GameState(String sessionId, Deck deck) {
         this.sessionId = sessionId;
         this.deck = deck;
     }
