@@ -1,0 +1,49 @@
+.flash-correct {
+  animation: flashGreen 1.5s ease-out;
+}
+.flash-wrong {
+  animation: flashRed 1.4s ease-out;
+}
+
+@keyframes flashGreen {
+  0% {
+    background-color: rgba(0, 255, 0, 0.4);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+@keyframes flashRed {
+  0% {
+    background-color: rgba(255, 0, 0, 0.4);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+.result-banner {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-top: 10px;
+  animation: fadeInOut 2s ease-out;
+}
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+.card-container {
+  transition: transform 0.3s ease;
+}

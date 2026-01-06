@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,10 +39,10 @@ class SessionServiceTest {
         response.setPlayer(responsePlayer);
 
         when(randomGenerator.generate()).thenReturn(uuid);
-        when(playerService.create("Test")).thenReturn(responsePlayer);
+        when(playerService.create(any(Player.class))).thenReturn(responsePlayer);
 
         assertEquals(response, sessionService.createSession(request));
-        assertNotNull(sessionService.getSession(response.getSessionId()));
+        assertNotNull(sessionService.getGameState(response.getSessionId()));
     }
 
     @Test
@@ -59,12 +60,12 @@ class SessionServiceTest {
         when(randomGenerator.generate()).thenReturn(uuid);
 
         assertEquals(response, sessionService.createSession(request));
-        assertNotNull(sessionService.getSession(response.getSessionId()));
+        assertNotNull(sessionService.getGameState(response.getSessionId()));
     }
 
     @Test
     void givenNotExistingSession_whenGetSession_throwException() {
-        assertThrows(RuntimeException.class, () -> sessionService.getSession("1"));
+        assertThrows(RuntimeException.class, () -> sessionService.getGameState("1"));
     }
 
     @Test
@@ -78,7 +79,7 @@ class SessionServiceTest {
         when(randomGenerator.generate()).thenReturn(uuid);
 
         sessionService.createSession(request);
-        assertNotNull(sessionService.getSession(uuid));
+        assertNotNull(sessionService.getGameState(uuid));
     }
 
     @Test
@@ -92,8 +93,8 @@ class SessionServiceTest {
         when(randomGenerator.generate()).thenReturn(uuid);
 
         sessionService.createSession(request);
-        assertNotNull(sessionService.getSession(uuid));
+        assertNotNull(sessionService.getGameState(uuid));
         sessionService.deleteSession(uuid);
-        assertThrows(RuntimeException.class, () -> sessionService.getSession("1"));
+        assertThrows(RuntimeException.class, () -> sessionService.getGameState("1"));
     }
 }

@@ -24,7 +24,8 @@ public class GameService {
                 null,
                 session.getLives(),
                 session.getScore(),
-                Status.ACTIVE
+                Status.ACTIVE, 
+                true
         );
     }
 
@@ -34,13 +35,15 @@ public class GameService {
                     session.getCurrentCard(), session.getPreviousCard(),
                     session.getLives(),
                     session.getScore(),
-                    Status.TIME_OUT
+                    Status.TIME_OUT,
+                    false
             );
         Card currentCard = session.getCurrentCard();
         session.setPreviousCard(currentCard);
         Card nextCard = session.getDeck().draw(currentCard);
         Guess correctGuess = compare(currentCard, nextCard);
-        if (guess.equals(correctGuess)) {
+        var isCorrectGuess = guess.equals(correctGuess);
+        if (isCorrectGuess) {
             session.incrementScore();
         } else {
             session.loseLife();
@@ -52,7 +55,8 @@ public class GameService {
                     nextCard,
                     session.getPreviousCard(),
                     session.getLives(), session.getScore(),
-                    Status.LIVES_LOST
+                    Status.LIVES_LOST,
+                    isCorrectGuess
             );
         }
 
@@ -64,7 +68,8 @@ public class GameService {
                 session.getPreviousCard(),
                 session.getLives(),
                 session.getScore(),
-                Status.ACTIVE
+                Status.ACTIVE,
+                isCorrectGuess
         );
     }
 

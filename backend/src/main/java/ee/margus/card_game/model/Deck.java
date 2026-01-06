@@ -22,7 +22,6 @@ public class Deck {
     }
 
     public Card draw(Card previous) {
-        Random random = new Random();
         if (previous == null) {
             return cards.get(random.nextInt(cards.size()));
         }

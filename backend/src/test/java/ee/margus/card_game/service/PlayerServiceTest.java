@@ -2,7 +2,6 @@ package ee.margus.card_game.service;
 
 import ee.margus.card_game.entity.Player;
 import ee.margus.card_game.repository.PlayerRepository;
-import org.hibernate.annotations.processing.Exclude;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,12 +21,14 @@ class PlayerServiceTest {
 
     @Test
     void create() {
+        Player request = new Player();
+        request.setName("Test");
         Player player = new Player();
         player.setId(1L);
         player.setName("Test");
 
         when(playerRepository.save(any(Player.class))).thenReturn(player);
 
-        assertEquals(player, playerService.create("Test"));
+        assertEquals(player, playerService.create(request));
     }
 }

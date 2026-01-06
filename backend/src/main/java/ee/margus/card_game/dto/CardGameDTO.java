@@ -16,4 +16,5 @@ public class CardGameDTO {
     private int lives;
     private int score;
     private Status status;
+    private boolean correct;
 }

@@ -38,7 +38,7 @@ function PlayerScores() {
   });
 
   useEffect(() => {
-    fetch(`${backendUrl}/player/${id}/scores`)
+    fetch(`${backendUrl}/scores/player/${id}`)
       .then((res) => res.json())
       .then((r) => setScores(r));
   }, [id]);

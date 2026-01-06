@@ -22,19 +22,16 @@ public class SessionService {
     private RandomGenerator randomGenerator;
 
     public StartGameDTO createSession(StartGameDTO request) {
+        if(request.getPlayer() == null || request.getPlayer().getId() == null) throw new RuntimeException("Player id is missing!");
+        Player player = playerService.getPlayer(request.getPlayer().getId());
         GameState gameState = new GameState(randomGenerator.generate(), new Deck(new Random()));
         String uuid = gameState.getSessionId();
-        if (request.getPlayer().getId() == null) {
-            Player createdPlayer = playerService.create(request.getPlayer().getName());
-            gameState.setPlayer(createdPlayer);
-        } else {
-            gameState.setPlayer(request.getPlayer());
-        }
+        gameState.setPlayer(player);
         games.put(uuid, gameState);
         return new StartGameDTO(uuid, gameState.getPlayer());
     }
 
-    public GameState getSession(String id) {
+    public GameState getGameState(String id) {
         GameState session = games.get(id);
         if (session == null) {
             throw new RuntimeException("Session not found");

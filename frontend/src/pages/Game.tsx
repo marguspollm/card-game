@@ -1,44 +1,49 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useContext, useEffect, useState } from "react";
 import type { CardGame } from "../models/CardGame";
 import type { GuessType } from "../models/GuessType";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import type { GameRequest } from "../models/requests/GameRequest";
-import type { Player } from "../models/Player";
-import Card from "../components/Card";
-import { convertCard } from "../utils/CardConverter";
+import GuessButtons from "../components/Game/GuessButtons";
+import GameBar from "../components/Game/GameBar";
+import CardDisplay from "../components/Game/CardDisplay";
+import { PlayerContext } from "../context/PlayerContext";
+import { Navigate } from "react-router";
+import "../css/Game.css";
 
 const backendUrl = import.meta.env.VITE_API_HOST;
 
 function Game() {
-  const [sessionId, setSessionId] = useState("");
+  const { isLoggedIn, player, sessionId, saveSession, savePlayer } =
+    useContext(PlayerContext);
   const [card, setCard] = useState<CardGame>();
-  const [player, setPlayer] = useState<Player>();
-  const [playerNameEntered, setPlayerNameEntered] = useState(false);
-  const [userCreated, setUserCreated] = useState(false);
+
   const [gameStarted, setGameStarted] = useState(false);
+  const [gameOver, setGameOver] = useState("");
+  const [guessResult, setGuessResult] = useState<"correct" | "wrong" | "">("");
+
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [timer, setTimer] = useState(10);
-  const [gameOver, setGameOver] = useState("");
 
   async function createSession() {
     const payload = { player };
     try {
-      const res = await fetch(`${backendUrl}/game`, {
+      const res = await fetch(`${backendUrl}/session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      setSessionId(data.sessionId);
-      setPlayer(data.player);
+      saveSession(data.sessionId);
+      savePlayer(data.player);
+      return data.sessionId;
     } catch (err) {
       console.error("Error creating session:", err);
     }
   }
 
-  async function startGame() {
-    const payload: GameRequest = { sessionId };
+  async function startGame(id: string) {
+    const payload: GameRequest = { sessionId: id };
     try {
       const res = await fetch(`${backendUrl}/game/start-game`, {
         method: "POST",
@@ -61,9 +66,19 @@ function Game() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
+
       setCard(data);
       setLives(data.lives);
       setScore(data.score);
+
+      if (data.correct === true) {
+        setGuessResult("correct");
+      } else if (data.correct === false) {
+        setGuessResult("wrong");
+      }
+
+      setTimeout(() => setGuessResult(""), 1000);
+
       if (data.status === "TIME_OUT") {
         setGameOver("Game over. Time ran out.");
         return;
@@ -72,6 +87,7 @@ function Game() {
         setGameOver("Game over. No more lives.");
         return;
       }
+
       setTimer(10);
     } catch (err) {
       console.error("Guess error:", err);
@@ -91,174 +107,93 @@ function Game() {
     }
   }
 
-  function handleNameChange(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    const name = e.target.value.trim();
-    setPlayer((prev) => ({ ...prev, name }));
-    setPlayerNameEntered(name.length > 0);
+  async function restartGame() {
+    await createSession().then((id) => {
+      drawCard(id);
+    });
   }
 
-  function createUserAndSession() {
-    createSession();
-    setUserCreated(true);
-  }
-
-  function startNewGame() {
-    createSession();
-    setUserCreated(true);
-    setGameStarted(false);
-    setGameOver("");
-  }
-
-  async function drawCard() {
+  async function drawCard(id: string) {
     setGameStarted(true);
     setScore(0);
     setLives(3);
     setTimer(10);
     setGameOver("");
-    await startGame();
+    await startGame(id);
   }
 
   useEffect(() => {
-    if (!userCreated || !gameStarted) return;
+    if (!gameStarted || gameOver) return;
     const intervalId = setInterval(() => {
       setTimer((t) => {
-        if (t <= 1) clearInterval(intervalId);
+        if (t <= 1) {
+          clearInterval(intervalId);
+          setGameOver("Game over. Time ran out.");
+          endGame();
+          return 0;
+        }
         return t - 1;
       });
     }, 1000);
     return () => clearInterval(intervalId);
-  }, [userCreated, gameStarted]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameStarted, gameOver]);
 
   useEffect(() => {
-    if (!userCreated || !gameStarted) return;
-    if (timer > 0) return;
-    endGame();
-  }, [timer, userCreated, gameStarted]);
+    createSession();
+  }, []);
+
+  if (!isLoggedIn) {
+    return <Navigate to="/create-player" replace />;
+  }
 
   return (
     <Box
       sx={{
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         height: "100vh",
-        flexDirection: "column",
       }}
     >
-      {!userCreated ? (
-        <>
-          <Box>
-            <TextField
-              type="text"
-              label="Enter player name:"
-              onChange={(e) => {
-                handleNameChange(e);
-              }}
-              sx={{
-                width: 250,
-                "& input": { textAlign: "center", fontWeight: 600 },
-              }}
-            />
-          </Box>
+      {!gameStarted ? (
+        <Box sx={{ textAlign: "center" }}>
+          <Typography>
+            After drawing card you have the option to decide if the next card is
+            HIGHER, LOWER or EQUAL.
+          </Typography>
+          <Typography>
+            If your choice is correct you get +1 point, if you are wrong you
+            lose a life.
+          </Typography>
+          <Typography>You have 10 seconds to decide</Typography>
           <Button
-            onClick={createUserAndSession}
             variant="contained"
-            disabled={!playerNameEntered}
+            sx={{ mt: 2 }}
+            onClick={() => drawCard(sessionId)}
           >
-            Start Game
+            Draw Card
           </Button>
-        </>
+        </Box>
       ) : (
         <>
-          {!gameStarted ? (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                textAlign: "center",
-              }}
-            >
-              <Typography>
-                After drawing card you have the option to decide if the next
-                card is HIGHER, LOWER or EQUAL.
-              </Typography>
-              <Typography>
-                If your choice is correct you get +1 point, if you are wrong you
-                lose a life.
-              </Typography>
-              <Typography>You have 10 seconds to decide</Typography>
-              <Button onClick={drawCard} variant="contained">
-                Draw Card
+          <GameBar
+            lives={lives}
+            timer={timer}
+            score={score}
+            guessResult={guessResult}
+          />
+          {!gameOver ? (
+            <GuessButtons sendGuess={sendGuess} />
+          ) : (
+            <Box sx={{ textAlign: "center", mt: 3 }}>
+              <Typography variant="h5">{gameOver}</Typography>
+              <Button variant="contained" sx={{ mt: 2 }} onClick={restartGame}>
+                Start New Game
               </Button>
             </Box>
-          ) : (
-            <>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  width: "100%",
-                  justifyContent: "space-evenly",
-                  alignItems: "center",
-                  p: 3,
-                }}
-              >
-                <Typography variant="h6">Lives: {lives}</Typography>
-                <Typography variant="h6" fontWeight={"bold"}>
-                  Time: {timer}s
-                </Typography>
-                <Typography variant="h6">Score: {score}</Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  fontSize: "1.8rem",
-                  textAlign: "center",
-                }}
-              >
-                {card?.previousCard?.rank && (
-                  <>
-                    <Typography variant="h6">
-                      Previous Card: {card?.previousCard.rank}
-                      {" of "}
-                      {card?.previousCard.suit}
-                    </Typography>
-                  </>
-                )}
-                <Card code={convertCard(card?.card.rank, card?.card.suit)} />
-                <Typography variant="h4">
-                  Current Card: {card?.card.rank} of {card?.card.suit}
-                </Typography>
-              </Box>
-              {!gameOver ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    gap: 2,
-                    width: "100%",
-                  }}
-                >
-                  <Button onClick={() => sendGuess("HIGHER")}>Higher</Button>
-                  <Button onClick={() => sendGuess("EQUAL")}>Equal</Button>
-                  <Button onClick={() => sendGuess("LOWER")}>Lower</Button>
-                </Box>
-              ) : (
-                <Box sx={{ textAlign: "center", mt: 2 }}>
-                  <Typography>{gameOver}</Typography>
-                  <Button onClick={startNewGame} variant="contained">
-                    Start New Game
-                  </Button>
-                </Box>
-              )}
-            </>
           )}
+          {card && <CardDisplay card={card} guessResult={guessResult} />}
         </>
       )}
     </Box>

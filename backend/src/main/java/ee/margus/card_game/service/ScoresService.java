@@ -29,4 +29,8 @@ public class ScoresService {
     public List<Score> getPlayerScores(Long id) {
         return scoreRepository.findByPlayer_IdOrderByScoreAsc(id);
     }
+
+    public void del() {
+        scoreRepository.deleteAll();
+    }
 }
