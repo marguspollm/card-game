@@ -41,6 +41,7 @@ class GameServiceTest {
         response.setScore(0);
         response.setLives(3);
         response.setStatus(Status.ACTIVE);
+        response.setCorrect(true);
 
         assertEquals(response, gameService.start(gameState));
     }
@@ -61,6 +62,7 @@ class GameServiceTest {
         response.setLives(3);
         response.setScore(1);
         response.setStatus(Status.ACTIVE);
+        response.setCorrect(true);
 
         when(deck.draw(any(Card.class))).thenReturn(nextCard);
 

@@ -15,59 +15,59 @@ public class GameService {
     @Autowired
     private SessionService sessionService;
 
-    public CardGameDTO start(GameState session) {
-        Card firstCard = session.getDeck().draw(session.getCurrentCard());
-        session.setCurrentCard(firstCard);
-        session.resetGuessTime();
-        return new CardGameDTO(session.getSessionId(),
+    public CardGameDTO start(GameState gameState) {
+        Card firstCard = gameState.getDeck().draw(gameState.getCurrentCard());
+        gameState.setCurrentCard(firstCard);
+        gameState.resetGuessTime();
+        return new CardGameDTO(gameState.getSessionId(),
                 firstCard,
                 null,
-                session.getLives(),
-                session.getScore(),
+                gameState.getLives(),
+                gameState.getScore(),
                 Status.ACTIVE, 
                 true
         );
     }
 
-    public CardGameDTO guess(GameState session, Guess guess) {
-        if (session.isTimedOut())
-            return new CardGameDTO(session.getSessionId(),
-                    session.getCurrentCard(), session.getPreviousCard(),
-                    session.getLives(),
-                    session.getScore(),
+    public CardGameDTO guess(GameState gameState, Guess guess) {
+        if (gameState.isTimedOut())
+            return new CardGameDTO(gameState.getSessionId(),
+                    gameState.getCurrentCard(), gameState.getPreviousCard(),
+                    gameState.getLives(),
+                    gameState.getScore(),
                     Status.TIME_OUT,
                     false
             );
-        Card currentCard = session.getCurrentCard();
-        session.setPreviousCard(currentCard);
-        Card nextCard = session.getDeck().draw(currentCard);
+        Card currentCard = gameState.getCurrentCard();
+        gameState.setPreviousCard(currentCard);
+        Card nextCard = gameState.getDeck().draw(currentCard);
         Guess correctGuess = compare(currentCard, nextCard);
         var isCorrectGuess = guess.equals(correctGuess);
         if (isCorrectGuess) {
-            session.incrementScore();
+            gameState.incrementScore();
         } else {
-            session.loseLife();
+            gameState.loseLife();
         }
-        if (session.isDead()) {
-            session.calcDuration();
-            endGame(session);
-            return new CardGameDTO(session.getSessionId(),
+        if (gameState.isDead()) {
+            gameState.calcDuration();
+            endGame(gameState);
+            return new CardGameDTO(gameState.getSessionId(),
                     nextCard,
-                    session.getPreviousCard(),
-                    session.getLives(), session.getScore(),
+                    gameState.getPreviousCard(),
+                    gameState.getLives(), gameState.getScore(),
                     Status.LIVES_LOST,
                     isCorrectGuess
             );
         }
 
-        session.setCurrentCard(nextCard);
-        session.resetGuessTime();
+        gameState.setCurrentCard(nextCard);
+        gameState.resetGuessTime();
 
-        return new CardGameDTO(session.getSessionId(),
+        return new CardGameDTO(gameState.getSessionId(),
                 nextCard,
-                session.getPreviousCard(),
-                session.getLives(),
-                session.getScore(),
+                gameState.getPreviousCard(),
+                gameState.getLives(),
+                gameState.getScore(),
                 Status.ACTIVE,
                 isCorrectGuess
         );
@@ -81,9 +81,9 @@ public class GameService {
         return Guess.EQUAL;
     }
 
-    public void endGame(GameState session) {
-        session.calcDuration();
-        scoresService.saveResult(session);
-        sessionService.deleteSession(session.getSessionId());
+    public void endGame(GameState gameState) {
+        gameState.calcDuration();
+        scoresService.saveResult(gameState);
+        sessionService.deleteSession(gameState.getSessionId());
     }
 }

@@ -25,28 +25,7 @@ class SessionServiceTest {
 
 
     @Test
-    void createSessionAndPlayer() {
-        StartGameDTO request = new StartGameDTO();
-        Player requestPlayer = new Player();
-        requestPlayer.setName("Test");
-        request.setPlayer(requestPlayer);
-
-        StartGameDTO response = new StartGameDTO();
-        Player responsePlayer = new Player();
-        responsePlayer.setName("Test");
-        responsePlayer.setId(1L);
-        response.setSessionId(uuid);
-        response.setPlayer(responsePlayer);
-
-        when(randomGenerator.generate()).thenReturn(uuid);
-        when(playerService.create(any(Player.class))).thenReturn(responsePlayer);
-
-        assertEquals(response, sessionService.createSession(request));
-        assertNotNull(sessionService.getGameState(response.getSessionId()));
-    }
-
-    @Test
-    void createNewSessions() {
+    void givenPlayer_whenCreateSession_returnNewSession() {
         StartGameDTO request = new StartGameDTO();
         Player player = new Player();
         player.setName("Test");
@@ -54,13 +33,20 @@ class SessionServiceTest {
         request.setPlayer(player);
 
         StartGameDTO response = new StartGameDTO();
-        response.setPlayer(player);
         response.setSessionId(uuid);
+        response.setPlayer(player);
 
         when(randomGenerator.generate()).thenReturn(uuid);
+        when(playerService.getPlayer(any(Long.class))).thenReturn(player);
 
         assertEquals(response, sessionService.createSession(request));
         assertNotNull(sessionService.getGameState(response.getSessionId()));
+    }
+
+    @Test
+    void givenNoPlayer_whenCreateNewSessions_thenThrowException() {
+        StartGameDTO request = new StartGameDTO();
+        assertThrows(RuntimeException.class, () -> sessionService.createSession(request));
     }
 
     @Test
