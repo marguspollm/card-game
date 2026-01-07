@@ -1,4 +1,12 @@
-import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router";
 import { PlayerContext } from "../context/PlayerContext";
@@ -18,6 +26,14 @@ function Header() {
     <>
       <AppBar position="static">
         <Toolbar variant="dense">
+          <IconButton key={"home"} component={Link} to={"/"}>
+            🏠
+          </IconButton>
+          <Divider
+            orientation="vertical"
+            sx={{ color: "white", mt: 0.5, mb: 0.5 }}
+            flexItem
+          />
           {!isLoggedIn ? (
             <Button
               key={"create-player"}

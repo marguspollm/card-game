@@ -9,7 +9,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -23,8 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ScoresControllerTest {
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockitoBean
     private ScoresService scoresService;
 
@@ -32,24 +29,21 @@ class ScoresControllerTest {
     void getAllScores() throws Exception {
         List<Score> scores = List.of(
                 new Score(1L, new Player(), 10, 1000L),
-                new Score(2L, new Player(), 20, 2000L)
-        );
+                new Score(2L, new Player(), 20, 2000L));
 
         when(scoresService.getAll()).thenReturn(scores);
 
         mockMvc.perform(get("/scores"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].score").value(10))
-        ;
+                .andExpect(jsonPath("$[0].score").value(10));
     }
 
     @Test
     void getPlayerScores() throws Exception {
         List<Score> scores = List.of(
                 new Score(1L, new Player(), 10, 1000L),
-                new Score(2L, new Player(), 15, 1500L)
-        );
+                new Score(2L, new Player(), 15, 1500L));
         when(scoresService.getPlayerScores(5L)).thenReturn(scores);
         mockMvc.perform(get("/scores/player/5"))
                 .andExpect(status().isOk())

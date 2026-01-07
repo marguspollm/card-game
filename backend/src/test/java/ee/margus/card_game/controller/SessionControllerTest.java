@@ -42,8 +42,8 @@ class SessionControllerTest {
         when(sessionService.createSession(any(StartGameDTO.class))).thenReturn(response);
 
         mockMvc.perform(post("/session")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sessionId").value("test-session-id"));
 

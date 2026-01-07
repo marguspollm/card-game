@@ -39,8 +39,8 @@ function PlayerScores() {
 
   useEffect(() => {
     fetch(`${backendUrl}/scores/player/${id}`)
-      .then((res) => res.json())
-      .then((r) => setScores(r));
+      .then(res => res.json())
+      .then(r => setScores(r));
   }, [id]);
 
   return (
@@ -71,7 +71,7 @@ function PlayerScores() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedScores?.map((row) => (
+            {sortedScores?.map(row => (
               <TableRow key={row.id}>
                 <TableCell align="left">{row.score}</TableCell>
                 <TableCell align="right">

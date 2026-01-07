@@ -20,11 +20,10 @@ function PlayerCreation() {
         body: JSON.stringify(player),
       });
       const data = await res.json();
-      console.log(data);
       savePlayer(data);
       navigate("/game");
     } catch (err) {
-      console.error("Error creating player:", err);
+      console.log("Error creating player:", err);
     }
   }
 
@@ -49,7 +48,7 @@ function PlayerCreation() {
       <TextField
         label="Enter player name"
         value={playerName}
-        onChange={(e) => handleNameChange(e)}
+        onChange={e => handleNameChange(e)}
         sx={{ width: 250, mb: 2 }}
       />
       <Button

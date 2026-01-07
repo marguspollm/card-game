@@ -5,6 +5,7 @@ import Scores from "./pages/Scores";
 import PlayerScores from "./pages/PlayerScores";
 import Game from "./pages/Game";
 import PlayerCreation from "./pages/PlayerCreation";
+import Home from "./pages/Home";
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
       <Header />
       <Box sx={{ margin: 5 }}>
         <Routes>
-          <Route path="/" element={<PlayerCreation />} />
+          <Route path="/" element={<Home />} />
           <Route path="/game" element={<Game />} />
           <Route path="/scores" element={<Scores />} />
           <Route path="/scores/player/:id" element={<PlayerScores />} />

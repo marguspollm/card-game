@@ -13,7 +13,7 @@ import "../css/Game.css";
 const backendUrl = import.meta.env.VITE_API_HOST;
 
 function Game() {
-  const { isLoggedIn, player, sessionId, saveSession, savePlayer } =
+  const { isLoggedIn, player, sessionId, saveSession, removeSession } =
     useContext(PlayerContext);
   const [card, setCard] = useState<CardGame>();
 
@@ -35,10 +35,9 @@ function Game() {
       });
       const data = await res.json();
       saveSession(data.sessionId);
-      savePlayer(data.player);
       return data.sessionId;
     } catch (err) {
-      console.error("Error creating session:", err);
+      console.log("Error creating session:", err);
     }
   }
 
@@ -53,7 +52,7 @@ function Game() {
       const data = await res.json();
       setCard(data);
     } catch (err) {
-      console.error("Error starting game:", err);
+      console.log("Error starting game:", err);
     }
   }
 
@@ -90,7 +89,7 @@ function Game() {
 
       setTimer(10);
     } catch (err) {
-      console.error("Guess error:", err);
+      console.log("Guess error:", err);
     }
   }
 
@@ -102,30 +101,27 @@ function Game() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      removeSession();
     } catch (err) {
-      console.error("End game error:", err);
+      console.log("End game error:", err);
     }
   }
 
-  async function restartGame() {
-    await createSession().then((id) => {
-      drawCard(id);
+  async function drawCard() {
+    await createSession().then(id => {
+      setGameStarted(true);
+      setScore(0);
+      setLives(3);
+      setTimer(10);
+      setGameOver("");
+      startGame(id);
     });
-  }
-
-  async function drawCard(id: string) {
-    setGameStarted(true);
-    setScore(0);
-    setLives(3);
-    setTimer(10);
-    setGameOver("");
-    await startGame(id);
   }
 
   useEffect(() => {
     if (!gameStarted || gameOver) return;
     const intervalId = setInterval(() => {
-      setTimer((t) => {
+      setTimer(t => {
         if (t <= 1) {
           clearInterval(intervalId);
           setGameOver("Game over. Time ran out.");
@@ -138,10 +134,6 @@ function Game() {
     return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameStarted, gameOver]);
-
-  useEffect(() => {
-    createSession();
-  }, []);
 
   if (!isLoggedIn) {
     return <Navigate to="/create-player" replace />;
@@ -167,11 +159,7 @@ function Game() {
             lose a life.
           </Typography>
           <Typography>You have 10 seconds to decide</Typography>
-          <Button
-            variant="contained"
-            sx={{ mt: 2 }}
-            onClick={() => drawCard(sessionId)}
-          >
+          <Button variant="contained" sx={{ mt: 2 }} onClick={drawCard}>
             Draw Card
           </Button>
         </Box>
@@ -188,7 +176,7 @@ function Game() {
           ) : (
             <Box sx={{ textAlign: "center", mt: 3 }}>
               <Typography variant="h5">{gameOver}</Typography>
-              <Button variant="contained" sx={{ mt: 2 }} onClick={restartGame}>
+              <Button variant="contained" sx={{ mt: 2 }} onClick={drawCard}>
                 Start New Game
               </Button>
             </Box>

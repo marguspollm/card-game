@@ -9,6 +9,7 @@ import {
   TableCell,
   TableBody,
   TableSortLabel,
+  Typography,
 } from "@mui/material";
 import { Link } from "react-router";
 import { formatDuration } from "../utils/TimeFormat";
@@ -38,8 +39,8 @@ function Scores() {
   useEffect(() => {
     const getData = async () => {
       await fetch(`${backendUrl}/scores`)
-        .then((res) => res.json())
-        .then((r) => setScores(r));
+        .then(res => res.json())
+        .then(r => setScores(r));
     };
 
     getData();
@@ -47,7 +48,9 @@ function Scores() {
 
   return (
     <div>
-      LeaderBoard
+      <Typography variant="h5" sx={{ mb: 3 }}>
+        LeaderBoard
+      </Typography>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -74,7 +77,7 @@ function Scores() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedScores?.map((row) => (
+            {sortedScores?.map(row => (
               <TableRow
                 key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

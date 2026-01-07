@@ -8,34 +8,33 @@ export const PlayerContextProvider = ({
   children: ReactNode;
 }) => {
   const [player, setPlayer] = useState<Player | null>(() => {
-    const saved = sessionStorage.getItem("player");
+    const saved = localStorage.getItem("player");
     return saved ? JSON.parse(saved) : null;
   });
   const [sessionId, setSessionId] = useState(() => {
     const saved = sessionStorage.getItem("sessionId");
     return saved ? JSON.parse(saved) : null;
   });
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLoggedIn = !!player;
 
   function removePlayer() {
     setPlayer(null);
-    setIsLoggedIn(false);
-    sessionStorage.removeItem("player");
+    removeSession();
+    localStorage.removeItem("player");
   }
 
   function savePlayer(player: Player) {
     setPlayer(player);
-    setIsLoggedIn(true);
-    sessionStorage.setItem("player", JSON.stringify(player));
+    localStorage.setItem("player", JSON.stringify(player));
   }
 
   function saveSession(id: string) {
     setSessionId(id);
-    sessionStorage.setItem("session", JSON.stringify(id));
+    sessionStorage.setItem("sessionId", JSON.stringify(id));
   }
 
   function removeSession() {
-    sessionStorage.removeItem("session");
+    sessionStorage.removeItem("sessionId");
   }
 
   return (
