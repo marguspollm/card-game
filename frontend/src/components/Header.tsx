@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Avatar,
   Box,
   Button,
   Divider,
@@ -20,6 +21,32 @@ function Header() {
     removePlayer();
     removeSession();
     navigate("/");
+  }
+
+  function initials() {
+    return player?.name
+      .split(" ")
+      .map(i => i[0])
+      .join("")
+      .toUpperCase();
+  }
+
+  function stringToColor(string: string = "") {
+    let hash = 0;
+    let i;
+
+    for (i = 0; i < string.length; i += 1) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    let color = "#";
+
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
+    }
+
+    return color;
   }
 
   return (
@@ -67,15 +94,22 @@ function Header() {
           <Box sx={{ flexGrow: 1 }} />
           {isLoggedIn && (
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-              <Typography>{player?.name}</Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Avatar sx={{ bgcolor: stringToColor(player?.name) }}>
+                  {initials()}
+                </Avatar>
+                <Typography variant="subtitle1">{player?.name}</Typography>
+              </Box>
+
               <Button
                 onClick={handleLogout}
                 variant="text"
                 sx={{
                   color: "white",
                   borderRadius: "12px",
-                  border: "1px solid black",
                   mx: 1,
+                  background:
+                    "linear-gradient(to right, #e15151ff, #fb1c15ff, #e15151ff )",
                 }}
               >
                 Logout

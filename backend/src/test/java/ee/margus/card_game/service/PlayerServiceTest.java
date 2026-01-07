@@ -8,13 +8,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class PlayerServiceTest {
@@ -48,14 +49,14 @@ class PlayerServiceTest {
         verify(playerRepository).findById(1L);
     }
 
-     @Test
+    @Test
     void testGetPlayerDoesntExist() {
         Player player = new Player();
         player.setId(1L);
         player.setName("Test");
         when(playerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(Exception.class,  () -> playerService.getPlayer(1L));
+        assertThrows(Exception.class, () -> playerService.getPlayer(1L));
 
         verify(playerRepository).findById(1L);
     }

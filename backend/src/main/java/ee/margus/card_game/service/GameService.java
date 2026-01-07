@@ -24,7 +24,7 @@ public class GameService {
                 null,
                 gameState.getLives(),
                 gameState.getScore(),
-                Status.ACTIVE, 
+                Status.ACTIVE,
                 true
         );
     }

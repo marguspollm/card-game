@@ -22,7 +22,8 @@ public class SessionService {
     private RandomGenerator randomGenerator;
 
     public StartGameDTO createSession(StartGameDTO request) {
-        if(request.getPlayer() == null || request.getPlayer().getId() == null) throw new RuntimeException("Player id is missing!");
+        if (request.getPlayer() == null || request.getPlayer().getId() == null)
+            throw new RuntimeException("Player id is missing!");
         Player player = playerService.getPlayer(request.getPlayer().getId());
         GameState gameState = new GameState(randomGenerator.generate(), new Deck(new Random()));
         String uuid = gameState.getSessionId();

@@ -30,9 +30,11 @@ function PlayerCreation() {
   function handleNameChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
-    const updatedName = e.target.value.trim();
+    const updatedName = e.target.value;
     setPlayerName(updatedName);
-    const updatedPlayer: Player = { name: updatedName };
+    const sanitizedName = updatedName.trim();
+    if (sanitizedName === "") return;
+    const updatedPlayer: Player = { name: sanitizedName };
     setPlayer(updatedPlayer);
   }
 

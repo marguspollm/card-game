@@ -30,16 +30,15 @@ function Home() {
               sx={{
                 width: 120,
                 height: 180,
-                marginLeft: i === 0 ? 0 : "-70px",
+                marginLeft: i === 0 ? 0 : "-90px",
                 transform: `rotate(${angle}deg)`,
                 transformOrigin: "center bottom",
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                cursor: "pointer",
                 "&:hover": {
                   transform: `rotate(${angle}deg) translateY(-20px) scale(1.1)`,
                   boxShadow: 6,
                 },
-                "& img": { width: "100%", height: "100%", borderRadius: "8px" },
+                "& img": { width: "100%", height: "100%" },
               }}
             >
               <Card code={code} />

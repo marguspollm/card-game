@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import type { CardGame } from "../models/CardGame";
+import type { GameState } from "../models/GameState";
 import type { GuessType } from "../models/GuessType";
 import { Box, Button, Typography } from "@mui/material";
 import type { GameRequest } from "../models/requests/GameRequest";
@@ -7,15 +7,16 @@ import GuessButtons from "../components/Game/GuessButtons";
 import GameBar from "../components/Game/GameBar";
 import CardDisplay from "../components/Game/CardDisplay";
 import { PlayerContext } from "../context/PlayerContext";
-import { Navigate } from "react-router";
 import "../css/Game.css";
+import { useNavigate } from "react-router";
 
 const backendUrl = import.meta.env.VITE_API_HOST;
 
 function Game() {
   const { isLoggedIn, player, sessionId, saveSession, removeSession } =
     useContext(PlayerContext);
-  const [card, setCard] = useState<CardGame>();
+  const navigate = useNavigate();
+  const [gameState, setGameState] = useState<GameState>();
 
   const [gameStarted, setGameStarted] = useState(false);
   const [gameOver, setGameOver] = useState("");
@@ -50,7 +51,7 @@ function Game() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      setCard(data);
+      setGameState(data);
     } catch (err) {
       console.log("Error starting game:", err);
     }
@@ -66,7 +67,7 @@ function Game() {
       });
       const data = await res.json();
 
-      setCard(data);
+      setGameState(data);
       setLives(data.lives);
       setScore(data.score);
 
@@ -136,7 +137,7 @@ function Game() {
   }, [gameStarted, gameOver]);
 
   if (!isLoggedIn) {
-    return <Navigate to="/create-player" replace />;
+    navigate("/create-player");
   }
 
   return (
@@ -181,7 +182,9 @@ function Game() {
               </Button>
             </Box>
           )}
-          {card && <CardDisplay card={card} guessResult={guessResult} />}
+          {gameState && (
+            <CardDisplay card={gameState} guessResult={guessResult} />
+          )}
         </>
       )}
     </Box>

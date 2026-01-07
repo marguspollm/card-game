@@ -38,8 +38,8 @@ class PlayerControllerTest {
         when(playerService.create(any(Player.class))).thenReturn(response);
 
         mockMvc.perform(post("/player")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("test"))
                 .andExpect(jsonPath("$.id").value(1L));

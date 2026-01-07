@@ -27,7 +27,7 @@ public class ScoresController {
     }
 
     @GetMapping("/scores/del")
-    public void deleteAll(){
+    public void deleteAll() {
         scoresService.del();
     }
 }

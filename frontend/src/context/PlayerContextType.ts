@@ -2,7 +2,7 @@ import type { Player } from "../models/Player";
 
 export type PlayerContextType = {
   player: Player | null;
-  sessionId: "";
+  sessionId: string;
   isLoggedIn: boolean;
   saveSession: (id: string) => void;
   removeSession: () => void;

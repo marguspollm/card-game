@@ -1,13 +1,13 @@
 import { Box, Typography } from "@mui/material";
 import { convertCard } from "../../utils/CardConverter";
-import type { CardGame } from "../../models/CardGame";
+import type { GameState } from "../../models/GameState";
 import Card from "./Card";
 
 function CardDisplay({
   card,
   guessResult,
 }: {
-  card: CardGame;
+  card: GameState;
   guessResult: string;
 }) {
   return (
