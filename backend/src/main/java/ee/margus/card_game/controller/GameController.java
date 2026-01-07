@@ -34,6 +34,7 @@ public class GameController {
     @PostMapping("/game/end-game")
     public void endGame(@RequestBody GameRequest request) {
         GameState gameState = sessionService.getGameState(request.getSessionId());
+        sessionService.deleteSession(gameState.getSessionId());
         gameService.endGame(gameState);
     }
 

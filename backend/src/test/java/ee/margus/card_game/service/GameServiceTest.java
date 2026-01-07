@@ -3,7 +3,6 @@ package ee.margus.card_game.service;
 import ee.margus.card_game.dto.CardGameDTO;
 import ee.margus.card_game.entity.Player;
 import ee.margus.card_game.model.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,18 +18,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GameServiceTest {
     @Mock
-    private SessionService sessionService;
-    @Mock
     private ScoresService scoresService;
     @InjectMocks
     private GameService gameService;
 
     String uuid = "test-random-uuid";
-
-    @BeforeEach
-    void tearDown() {
-        sessionService.deleteSession(uuid);
-    }
 
     @Test
     void start() {

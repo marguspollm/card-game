@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import Card from "../components/Game/Card";
 
 function Home() {
-  const cards = ["2H", "AD", "KS", "8C"];
+  const cards = ["2C", "AD", "KS", "8C", "JH"];
   return (
     <Box
       sx={{

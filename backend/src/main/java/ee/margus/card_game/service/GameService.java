@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 public class GameService {
     @Autowired
     private ScoresService scoresService;
-    @Autowired
-    private SessionService sessionService;
 
     public CardGameDTO start(GameState gameState) {
         Card firstCard = gameState.getDeck().draw(gameState.getCurrentCard());
@@ -84,6 +82,5 @@ public class GameService {
     public void endGame(GameState gameState) {
         gameState.calcDuration();
         scoresService.saveResult(gameState);
-        sessionService.deleteSession(gameState.getSessionId());
     }
 }
