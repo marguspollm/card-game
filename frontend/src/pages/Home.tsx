@@ -34,10 +34,6 @@ function Home() {
                 transform: `rotate(${angle}deg)`,
                 transformOrigin: "center bottom",
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                "&:hover": {
-                  transform: `rotate(${angle}deg) translateY(-20px) scale(1.1)`,
-                  boxShadow: 6,
-                },
                 "& img": { width: "100%", height: "100%" },
               }}
             >
