@@ -6,15 +6,15 @@ import { useNavigate } from "react-router";
 
 const backendUrl = import.meta.env.VITE_API_HOST;
 
-function PlayerCreation() {
+function Login() {
   const [playerName, setPlayerName] = useState("");
   const [player, setPlayer] = useState<Player>();
   const { savePlayer } = useContext(PlayerContext);
   const navigate = useNavigate();
 
-  async function createPlayer() {
+  async function login() {
     try {
-      const res = await fetch(`${backendUrl}/player`, {
+      const res = await fetch(`${backendUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(player),
@@ -53,15 +53,11 @@ function PlayerCreation() {
         onChange={e => handleNameChange(e)}
         sx={{ width: 250, mb: 2 }}
       />
-      <Button
-        variant="contained"
-        disabled={!playerName.trim()}
-        onClick={createPlayer}
-      >
-        Create player
+      <Button variant="contained" disabled={!playerName.trim()} onClick={login}>
+        Login
       </Button>
     </Box>
   );
 }
 
-export default PlayerCreation;
+export default Login;

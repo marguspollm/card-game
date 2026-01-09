@@ -1,5 +1,6 @@
 package ee.margus.card_game.controller;
 
+import ee.margus.card_game.dto.PlayerDTO;
 import ee.margus.card_game.entity.Player;
 import ee.margus.card_game.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,9 @@ public class PlayerController {
     @Autowired
     private PlayerService playerService;
 
-    @PostMapping("/player")
-    public Player createPlayer(@RequestBody Player player) {
-        return playerService.create(player);
+    @PostMapping("/login")
+    public Player login(@RequestBody PlayerDTO player) {
+        return playerService.login(player);
     }
 
 }

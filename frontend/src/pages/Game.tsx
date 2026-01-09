@@ -136,9 +136,12 @@ function Game() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameStarted, gameOver]);
 
-  if (!isLoggedIn) {
-    navigate("/create-player");
-  }
+  useEffect(() => {
+    if (!isLoggedIn) {
+      console.log(isLoggedIn);
+      navigate("/login");
+    }
+  }, []);
 
   return (
     <Box

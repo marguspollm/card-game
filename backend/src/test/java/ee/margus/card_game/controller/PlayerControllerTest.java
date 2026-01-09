@@ -1,5 +1,6 @@
 package ee.margus.card_game.controller;
 
+import ee.margus.card_game.dto.PlayerDTO;
 import ee.margus.card_game.entity.Player;
 import ee.margus.card_game.service.PlayerService;
 import org.junit.jupiter.api.Test;
@@ -28,16 +29,34 @@ class PlayerControllerTest {
     private PlayerService playerService;
 
     @Test
-    void createPlayer() throws Exception {
-        Player request = new Player();
+    void loginAndCreatePlayer() throws Exception {
+        PlayerDTO request = new PlayerDTO();
         request.setName("test");
         Player response = new Player();
         response.setId(1L);
         response.setName("test");
 
-        when(playerService.create(any(Player.class))).thenReturn(response);
+        when(playerService.login(any(PlayerDTO.class))).thenReturn(response);
 
-        mockMvc.perform(post("/player")
+        mockMvc.perform(post("/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("test"))
+                .andExpect(jsonPath("$.id").value(1L));
+    }
+
+    @Test
+    void loginAndExistingPlayer() throws Exception {
+        PlayerDTO request = new PlayerDTO();
+        request.setName("test");
+        Player response = new Player();
+        response.setId(1L);
+        response.setName("test");
+
+        when(playerService.login(any(PlayerDTO.class))).thenReturn(response);
+
+        mockMvc.perform(post("/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())

@@ -63,13 +63,13 @@ function Header() {
           />
           {!isLoggedIn ? (
             <Button
-              key={"create-player"}
+              key={"login"}
               component={Link}
-              to={"/create-player"}
+              to={"/login"}
               variant="text"
               sx={{ color: "white" }}
             >
-              Create player
+              Login
             </Button>
           ) : (
             <Button
