@@ -40,7 +40,10 @@ function Scores() {
     const getData = async () => {
       await fetch(`${backendUrl}/scores`)
         .then(res => res.json())
-        .then(r => setScores(r));
+        .then(r => setScores(r))
+        .catch(err => {
+          console.log(err);
+        });
     };
 
     getData();
@@ -83,7 +86,7 @@ function Scores() {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row" key={row.player.id}>
-                  <Link to={`/scores/player/${row.player.id}`}>
+                  <Link to={`/player/${row.player.id}/scores`}>
                     {row.player.name}
                   </Link>
                 </TableCell>

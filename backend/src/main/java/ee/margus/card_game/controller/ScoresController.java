@@ -21,13 +21,8 @@ public class ScoresController {
         return scoresService.getAll();
     }
 
-    @GetMapping("/scores/player/{id}")
+    @GetMapping("/player/{id}/scores")
     public List<Score> getPlayerScores(@PathVariable Long id) {
         return scoresService.getPlayerScores(id);
-    }
-
-    @GetMapping("/scores/del")
-    public void deleteAll() {
-        scoresService.del();
     }
 }

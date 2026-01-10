@@ -30,7 +30,4 @@ public class ScoresService {
         return scoreRepository.findByPlayer_IdOrderByScoreAsc(id);
     }
 
-    public void del() {
-        scoreRepository.deleteAll();
-    }
 }
